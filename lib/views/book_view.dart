@@ -16,35 +16,179 @@ class _BookViewState extends State<BookView> {
       ),
       body: Column(
         children: [
+          const SizedBox(
+            height: 20,
+          ),
           Container(
-            width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.only(left: 10),
             child: SizedBox(
-              height: 555,
-              width: 100,
+              height: 45,
               child: ListView.builder(
                 itemCount: 6,
+                scrollDirection: Axis.horizontal,
                 itemBuilder: ((context, index) {
                   return InkWell(
-                    enableFeedback: true,
                     child: Container(
-                      margin: const EdgeInsets.only(top: 20, right: 10),
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      child: TextButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(
-                                Theme.of(context).primaryColor)),
-                        onPressed: () {},
-                        child: const Text(
-                          '10:00 Am',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                      margin: const EdgeInsets.only(
+                        right: 10,
                       ),
+                      width: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(child: Text('Monday')),
                     ),
                   );
                 }),
               ),
+            ),
+          ),
+          const Divider(
+            height: 30,
+            thickness: 2,
+            color: Color.fromARGB(255, 136, 0, 167),
+          ),
+          const Text(
+            'Morning',
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Container(
+            height: 100,
+            child: SizedBox(
+              child: GridView.builder(
+                  itemCount: 8,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    mainAxisExtent: 50,
+                  ),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        child: Container(
+                          height: 20,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '10am',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+            ),
+          ),
+          const Divider(
+            height: 30,
+            thickness: 2,
+            color: Color.fromARGB(255, 155, 135, 158),
+          ),
+          const Text(
+            'Afternoon',
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          SizedBox(
+            height: 100,
+            child: SizedBox(
+              child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 10,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    mainAxisExtent: 50,
+                  ),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        child: Container(
+                          height: 20,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '1pm',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+            ),
+          ),
+          const Divider(
+            height: 50,
+            thickness: 2,
+            color: Color.fromARGB(255, 155, 135, 158),
+          ),
+          const Text(
+            'Evening',
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Container(
+            height: 100,
+            child: SizedBox(
+              child: GridView.builder(
+                  itemCount: 6,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    mainAxisExtent: 50,
+                  ),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        child: Container(
+                          height: 20,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '5pm',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:bubble/constants/route.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -89,7 +90,10 @@ class _GetStartedViewState extends State<GetStartedView> {
             width: 330,
             margin: const EdgeInsets.only(top: 100),
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(exploreRoute, (route) => false);
+              },
               style: ButtonStyle(
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(

@@ -26,7 +26,7 @@ class _ExploreViewState extends State<ExploreView> {
         ],
         centerTitle: true,
         title: const Text(
-          "Groups",
+          "Explore",
           style: TextStyle(
             fontSize: 25,
           ),
@@ -122,26 +122,33 @@ class _ExploreViewState extends State<ExploreView> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.purple)),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.purple,
+                    ),
+                  ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton(
-                        focusColor: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        value: value,
-                        items:
-                            items.map<DropdownMenuItem<String>>((String value) {
+                      focusColor: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      value: value,
+                      items: items.map<DropdownMenuItem<String>>(
+                        (String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
                           );
-                        }).toList(),
-                        hint: const Text("Select Category"),
-                        onChanged: (value) {
-                          setState(() {
+                        },
+                      ).toList(),
+                      hint: const Text("Select Category"),
+                      onChanged: (value) {
+                        setState(
+                          () {
                             this.value = value;
-                          });
-                        }),
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Container(
