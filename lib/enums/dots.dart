@@ -1,0 +1,4 @@
+enum MenuAction {
+  search,
+  delete,
+}
