@@ -28,7 +28,7 @@ class _GetStartedViewState extends State<GetStartedView> {
           const SizedBox(
             height: 80,
           ),
-          Container(
+          SizedBox(
             height: 100,
             child: Stack(
               children: [
@@ -45,7 +45,7 @@ class _GetStartedViewState extends State<GetStartedView> {
                 ),
                 Positioned(
                   left: 140,
-                  top: 35,
+                  top: 33,
                   child: SizedBox(
                     height: 60,
                     width: 80,
