@@ -12,7 +12,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  var phone = "";
+  String phone = "";
 
   @override
   Widget build(BuildContext context) {

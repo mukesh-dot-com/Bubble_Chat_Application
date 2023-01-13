@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bubble/constants/route.dart';
+import 'package:bubble/views/explore_view.dart';
 import 'package:bubble/views/login_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
@@ -18,8 +20,10 @@ class _OTPViewState extends State<OTPView> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   int _counter = 60;
   late Timer _timer;
+  String? role;
   // var usernameController = TextEditingController();
   // var phoneController = TextEditingController();
+
   var otpController = List.generate(6, (index) => TextEditingController());
   _OTPViewState() {
     _startTimer();
@@ -118,6 +122,53 @@ class _OTPViewState extends State<OTPView> {
                       smsCode: code,
                     );
                     await auth.signInWithCredential(credential);
+                    final snapShot = await FirebaseFirestore.instance
+                        .collection("doctor")
+                        .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+                        .get();
+                    print(snapShot);
+                    if (!snapShot.exists) {
+                      final snapShot2 = await FirebaseFirestore.instance
+                          .collection("patient")
+                          .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+                          .get();
+                      if (!snapShot2.exists) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pushNamed(roleRoute);
+                      } else {
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => ExploreView(
+                              role: "patient",
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => ExploreView(
+                            role: "doctor",
+                          ),
+                        ),
+                      );
+                    }
+                    // checkUser() async {
+//     String? role;
+//     final snapShot = await FirebaseFirestore.instance
+//         .collection("doctor")
+//         .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+//         .get();
+//     if (snapShot == null || !snapShot.exists) {
+//       role = "patient";
+//       return ExploreView(role: role);
+//     } else {
+//       role = "doctor";
+//       return ExploreView(role: role);
+// }
+
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       roleRoute,
                       (route) => false,

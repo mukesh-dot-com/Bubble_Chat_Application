@@ -13,6 +13,7 @@ import 'package:bubble/views/otp_view.dart';
 import 'package:bubble/views/role_view.dart';
 import 'package:bubble/views/search_view.dart';
 import 'package:bubble/views/setting_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -37,20 +38,13 @@ void main() async {
       themeMode: ThemeMode.dark,
       home: checkUser(),
       routes: {
-        exploreRoute: (context) => const ExploreView(),
-        searchRoute: (context) => const SearchView(),
-        contactRoute: (context) => const ContactsView(),
-        settingRoute: (context) => const SettingView(),
-        chatRoute: (context) => const ChatView(),
         messageRoute: (context) => const MessageView(),
         // profileRoute: (context) => const ProfileView(),
         bookRoute: (context) => const BookView(),
         otpRoute: (context) => const OTPView(),
         loginRoute: (context) => const LoginView(),
         roleRoute: (context) => const RoleView(),
-        formRoute: (context) => const FormView(),
         chatUIRoute: (context) => const ChatUserInterfaceView(),
-        formDoctorRoute: (context) => const FormDoctorView(),
       },
     ),
   );
@@ -61,6 +55,17 @@ checkUser() {
     print(FirebaseAuth.instance.currentUser);
     return const GetStartedView();
   } else {
-    return const ExploreView();
+    String? role;
+    final snapShot = FirebaseFirestore.instance
+        .collection("doctor")
+        .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+        .get();
+    if (snapShot == null) {
+      role = "patient";
+      return ExploreView(role: role);
+    } else {
+      role = "doctor";
+      return ExploreView(role: role);
+    }
   }
 }

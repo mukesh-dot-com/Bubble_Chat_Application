@@ -1,4 +1,5 @@
 import 'package:bubble/constants/route.dart';
+import 'package:bubble/views/explore_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 class FormView extends StatefulWidget {
-  const FormView({super.key});
+  String? role;
+  FormView({super.key, required this.role});
 
   @override
   // ignore: library_private_types_in_public_api
-  _FormViewState createState() => _FormViewState();
+  _FormViewState createState() => _FormViewState(role);
 }
 
 class _FormViewState extends State<FormView> {
@@ -24,9 +26,12 @@ class _FormViewState extends State<FormView> {
   TextEditingController bloodController = TextEditingController();
   TextEditingController heightController = TextEditingController();
   TextEditingController weightController = TextEditingController();
+  String? role;
+  _FormViewState(this.role);
   @override
   void initState() {
     super.initState();
+    print(role);
     dateController.text = "";
   }
 
@@ -288,7 +293,6 @@ class _FormViewState extends State<FormView> {
                     return showError("Weight Field");
                   } else {
                     Map<String, dynamic> patientData = {
-                      "phone": user?.phoneNumber,
                       "name": nameController.text,
                       "dob": dateController.text,
                       "blood_type": bloodController.text,
@@ -296,14 +300,23 @@ class _FormViewState extends State<FormView> {
                       "height": heightController.text,
                       "weight": weightController.text,
                       "image": null,
+                      "phone": user?.phoneNumber,
                     };
                     print(patientData);
-                    FirebaseFirestore.instance
-                        .collection("patient")
-                        .add(patientData)
-                        .whenComplete(() => {print("success")});
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        exploreRoute, (route) => false);
+                    try {
+                      FirebaseFirestore.instance
+                          .collection("patient")
+                          .doc(user?.phoneNumber)
+                          .set(patientData)
+                          .whenComplete(() => {print("success")});
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => ExploreView(role: role),
+                        ),
+                      );
+                    } catch (e) {
+                      print("failure");
+                    }
                   }
                 },
                 child: const Text(

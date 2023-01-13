@@ -1,17 +1,23 @@
 import 'package:bubble/constants/route.dart';
+import 'package:bubble/views/chat_view.dart';
+import 'package:bubble/views/contacts_view.dart';
+import 'package:bubble/views/explore_view.dart';
+import 'package:bubble/views/setting_view.dart';
 import 'package:flutter/material.dart';
 
 class FooterView extends StatefulWidget {
   final int index;
-  const FooterView(this.index, {super.key});
+  String? role;
+  FooterView(this.index, this.role, {super.key});
   @override
   // ignore: no_logic_in_create_state
-  State<FooterView> createState() => _FooterViewState(index);
+  State<FooterView> createState() => _FooterViewState(index, role);
 }
 
 class _FooterViewState extends State<FooterView> {
   int _currentIndex;
-  _FooterViewState(this._currentIndex);
+  String? role;
+  _FooterViewState(this._currentIndex, this.role);
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -46,17 +52,17 @@ class _FooterViewState extends State<FooterView> {
           } else {
             _currentIndex = index;
             if (_currentIndex == 0) {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(exploreRoute, ((_) => false));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => ExploreView(role: role)));
             } else if (_currentIndex == 1) {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(chatRoute, ((_) => false));
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => ChatView(role)));
             } else if (_currentIndex == 2) {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(contactRoute, ((_) => false));
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => ContactsView(role)));
             } else if (_currentIndex == 3) {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(settingRoute, ((_) => false));
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => SettingView(role)));
             }
           }
         });

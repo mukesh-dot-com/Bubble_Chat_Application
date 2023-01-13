@@ -8,23 +8,33 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SettingView extends StatefulWidget {
-  const SettingView({super.key});
+  String? role;
+  SettingView(this.role, {super.key});
 
   @override
-  State<SettingView> createState() => _SettingViewState();
+  State<SettingView> createState() => _SettingViewState(role);
 }
 
 class _SettingViewState extends State<SettingView> {
   String imageURL = "";
   final user = FirebaseFirestore.instance;
   String imageMainURL = "";
+  String? role;
+  _SettingViewState(this.role);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(role);
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection("patient")
-            .doc("xWmIL6IgNVSWxXxrdDEQ")
+            .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
             .get()
             .asStream(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -49,9 +59,10 @@ class _SettingViewState extends State<SettingView> {
                       height: 150,
                       width: 150,
                       child: CircleAvatar(
-                        backgroundImage: (snapshot.data!["image"] != null)
-                            ? NetworkImage(snapshot.data!["image"])
-                            : const NetworkImage("assets/doctor.jpg"),
+                        backgroundImage: (snapshot.data?["image"] == null)
+                            ? const AssetImage("assets/doctor.jpg")
+                                as ImageProvider
+                            : NetworkImage(snapshot.data?["image"]),
                         minRadius: 1,
                       ),
                     ),
@@ -219,7 +230,7 @@ class _SettingViewState extends State<SettingView> {
                 ),
               ],
             ),
-            bottomNavigationBar: const FooterView(3),
+            bottomNavigationBar: FooterView(3, role),
           );
         });
   }

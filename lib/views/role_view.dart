@@ -1,4 +1,6 @@
 import 'package:bubble/constants/route.dart';
+import 'package:bubble/views/form_view.dart';
+import 'package:bubble/views/form_view_doctor.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -12,6 +14,7 @@ class RoleView extends StatefulWidget {
 class _RoleViewState extends State<RoleView> {
   int selectedIndex = -1;
   bool notSet = false;
+  String? role;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +54,7 @@ class _RoleViewState extends State<RoleView> {
                 setState(() {
                   selectedIndex =
                       (selectedIndex != -1 && selectedIndex != 2) ? -1 : 1;
+                  role = "doctor";
                 });
               },
               child: Container(
@@ -88,6 +92,7 @@ class _RoleViewState extends State<RoleView> {
                 setState(() {
                   selectedIndex =
                       (selectedIndex != -1 && selectedIndex != 1) ? -1 : 2;
+                  role = "patient";
                 });
               },
               child: Container(
@@ -139,10 +144,18 @@ class _RoleViewState extends State<RoleView> {
                 onPressed: () {
                   if (selectedIndex != -1) {
                     if (selectedIndex == 1) {
-                      Navigator.of(context).pushNamed(formDoctorRoute);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => FormDoctorView(role: role),
+                        ),
+                      );
                     }
                     if (selectedIndex == 2) {
-                      Navigator.of(context).pushNamed(formRoute);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => FormView(role: role),
+                        ),
+                      );
                     }
                   } else {
                     notSet = true;

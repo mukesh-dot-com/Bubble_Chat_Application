@@ -6,27 +6,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ExploreView extends StatefulWidget {
-  const ExploreView({super.key});
+  String? role;
+  ExploreView({super.key, required this.role});
   @override
-  State<ExploreView> createState() => _ExploreViewState();
+  State<ExploreView> createState() => _ExploreViewState(role);
 }
 
 class _ExploreViewState extends State<ExploreView> {
+  String? role;
+  _ExploreViewState(this.role);
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(role);
+  }
 
-  final items = ['All','General', 'ENT', 'OrthoPedic', 'Dermatology', 'Dentist'];
+  final items = [
+    'All',
+    'General',
+    'ENT',
+    'OrthoPedic',
+    'Dermatology',
+    'Dentist'
+  ];
   final user = FirebaseAuth.instance.currentUser;
-  late  bool flag=false;
+  late bool flag = false;
   var photos = [
     'assets/doctor.jpg',
     'assets/ladyDoctor2.jpeg',
     'assets/ladyDoctor.jpg',
     'assets/doctor2.jpeg'
   ];
-  // var names = ['Dr. Sandeep', 'Dr. Regina', 'Dr. Jenna Ortega', 'Dr. Simons'];
-  // var itemCount = 4;
-  // final fireStore = FirebaseFirestore.instance.collection('doctor').where('specialisation',isEqualTo: this.value).snapshots();
-  // final fireStore = FirebaseFirestore.instance.collection('doctor').snapshots();
-
   String? value;
   @override
   Widget build(BuildContext context) {
@@ -37,8 +48,8 @@ class _ExploreViewState extends State<ExploreView> {
             icon: const Icon(Icons.search_rounded),
             onPressed: () {
               showSearch(
-                  context: context,
-                  delegate: MySearchDelegate(),
+                context: context,
+                delegate: MySearchDelegate(),
               );
               // Navigator.of(context).restorablePushNamed(profileRoute);
               // Navigator.of(context).pushNamed(searchRoute);
@@ -152,7 +163,7 @@ class _ExploreViewState extends State<ExploreView> {
                 Container(
                   width: 350,
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
@@ -165,7 +176,7 @@ class _ExploreViewState extends State<ExploreView> {
                       borderRadius: BorderRadius.circular(20),
                       value: value,
                       items: items.map<DropdownMenuItem<String>>(
-                            (String value) {
+                        (String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -175,15 +186,14 @@ class _ExploreViewState extends State<ExploreView> {
                       hint: const Text("Select Category"),
                       onChanged: (value) {
                         setState(
-                              () {
+                          () {
                             this.value = value;
-                            flag=false;
+                            flag = false;
                           },
                         );
-                        if(this.value=='All')
-                          {
-                            flag=true;
-                          }
+                        if (this.value == 'All') {
+                          flag = true;
+                        }
                       },
                     ),
                   ),
@@ -207,8 +217,14 @@ class _ExploreViewState extends State<ExploreView> {
             ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: (flag)?FirebaseFirestore.instance.collection('doctor').snapshots()
-                    :FirebaseFirestore.instance.collection('doctor').where('specialisation',isEqualTo: this.value).snapshots(),
+                stream: (flag)
+                    ? FirebaseFirestore.instance
+                        .collection('doctor')
+                        .snapshots()
+                    : FirebaseFirestore.instance
+                        .collection('doctor')
+                        .where('specialisation', isEqualTo: this.value)
+                        .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -242,7 +258,7 @@ class _ExploreViewState extends State<ExploreView> {
                             children: [
                               Container(
                                 height:
-                                MediaQuery.of(context).size.height * 0.3,
+                                    MediaQuery.of(context).size.height * 0.3,
                                 width: MediaQuery.of(context).size.width * 0.35,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
@@ -260,7 +276,7 @@ class _ExploreViewState extends State<ExploreView> {
                                 width: MediaQuery.of(context).size.width * 0.5,
                                 //decoration: BoxDecoration(border: Border.all(width: 2)),
                                 padding:
-                                const EdgeInsets.only(top: 8, left: 10),
+                                    const EdgeInsets.only(top: 8, left: 10),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -269,7 +285,7 @@ class _ExploreViewState extends State<ExploreView> {
                                           .toString(),
                                       style: const TextStyle(
                                         color:
-                                        Color.fromARGB(255, 253, 244, 244),
+                                            Color.fromARGB(255, 253, 244, 244),
                                         fontSize: 22,
                                       ),
                                     ),
@@ -295,7 +311,7 @@ class _ExploreViewState extends State<ExploreView> {
                                     ),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: const [
@@ -310,14 +326,13 @@ class _ExploreViewState extends State<ExploreView> {
                                             TextButton(
                                               style: const ButtonStyle(
                                                 backgroundColor:
-                                                MaterialStatePropertyAll(
-                                                    Colors.white),
+                                                    MaterialStatePropertyAll(
+                                                        Colors.white),
                                               ),
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pushNamed(profileRoute);
-                                              },
-                                              child: const Text('Book'),
+                                              onPressed: () {},
+                                              child: Text((role == "doctor")
+                                                  ? 'view'
+                                                  : 'book'),
                                             ),
                                           ],
                                         ),
@@ -338,13 +353,12 @@ class _ExploreViewState extends State<ExploreView> {
           ],
         ),
       ),
-      bottomNavigationBar: const FooterView(0),
+      bottomNavigationBar: FooterView(0, role),
     );
   }
 }
 
 class MySearchDelegate extends SearchDelegate {
-
   var photos = [
     'assets/doctor.jpg',
     'assets/ladyDoctor2.jpeg',
@@ -353,183 +367,176 @@ class MySearchDelegate extends SearchDelegate {
   ];
   List<String> searchResults = ['Uday Raj', 'mukesh', 'Mukesh Kumar', 'Jayam'];
 
-
   @override
   Widget? buildLeading(BuildContext context) => IconButton(
-    icon: const Icon(Icons.arrow_back),
-    onPressed: () => close(context, null),
-  );
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => close(context, null),
+      );
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
-    IconButton(icon: const Icon(Icons.clear),
-    onPressed: () {
-      if (query.isEmpty) {
-        close(context, null);
-      }
-      query = '';
-    },
-    ),
-  ];
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            if (query.isEmpty) {
+              close(context, null);
+            }
+            query = '';
+          },
+        ),
+      ];
 
   @override
   Widget buildResults(BuildContext context) => Expanded(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('doctor').where('name',isEqualTo: query).snapshots(),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
-          if (snapshot.hasError) {
-            return const Text("Something Went Wrong");
-          }
-          return ListView.builder(
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(3.0),
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileView(snapshot.data!.docs[index])));
-                },
-                child: Container(
-                  height: 160,
-                  margin: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 161, 70, 213),
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(10),
-                      bottom: Radius.circular(30),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('doctor')
+              .where('name', isEqualTo: query)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              return const Text("Something Went Wrong");
+            }
+            return ListView.builder(
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.all(3.0),
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileView(snapshot.data!.docs[index])));
+                  },
+                  child: Container(
+                    height: 160,
+                    margin: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 161, 70, 213),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(10),
+                        bottom: Radius.circular(30),
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height:
-                        MediaQuery.of(context).size.height * 0.3,
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                            image: AssetImage(
-                              photos[(index) % photos.length],
+                    child: Row(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                              image: AssetImage(
+                                photos[(index) % photos.length],
+                              ),
+                              alignment: Alignment.center,
+                              opacity: 0.9,
+                              fit: BoxFit.fill,
                             ),
-                            alignment: Alignment.center,
-                            opacity: 0.9,
-                            fit: BoxFit.fill,
                           ),
                         ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        //decoration: BoxDecoration(border: Border.all(width: 2)),
-                        padding:
-                        const EdgeInsets.only(top: 8, left: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              snapshot.data!.docs[index]['name']
-                                  .toString(),
-                              style: const TextStyle(
-                                color:
-                                Color.fromARGB(255, 253, 244, 244),
-                                fontSize: 22,
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          //decoration: BoxDecoration(border: Border.all(width: 2)),
+                          padding: const EdgeInsets.only(top: 8, left: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                snapshot.data!.docs[index]['name'].toString(),
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 253, 244, 244),
+                                  fontSize: 22,
+                                ),
                               ),
-                            ),
-                            const Padding(padding: EdgeInsets.all(2)),
-                            Text(
-                              snapshot
-                                  .data!.docs[index]['specialisation']
-                                  .toString(),
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 12),
-                            ),
-                            const Padding(padding: EdgeInsets.all(3)),
-                            SizedBox(
-                              height: 40,
-                              child: Text(
-                                snapshot.data!.docs[index]['about']
+                              const Padding(padding: EdgeInsets.all(2)),
+                              Text(
+                                snapshot.data!.docs[index]['specialisation']
                                     .toString(),
                                 style: const TextStyle(
-                                    color: Colors.white),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                                    color: Colors.white, fontSize: 12),
                               ),
-                            ),
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: const [
-                                    Icon(Icons.star),
-                                    Icon(Icons.star),
-                                    Icon(Icons.star),
-                                    Icon(Icons.star),
-                                  ],
+                              const Padding(padding: EdgeInsets.all(3)),
+                              SizedBox(
+                                height: 40,
+                                child: Text(
+                                  snapshot.data!.docs[index]['about']
+                                      .toString(),
+                                  style: const TextStyle(color: Colors.white),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                Column(
-                                  children: [
-                                    TextButton(
-                                      style: const ButtonStyle(
-                                        backgroundColor:
-                                        MaterialStatePropertyAll(
-                                            Colors.white),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: const [
+                                      Icon(Icons.star),
+                                      Icon(Icons.star),
+                                      Icon(Icons.star),
+                                      Icon(Icons.star),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      TextButton(
+                                        style: const ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.white),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pushNamed(profileRoute);
+                                        },
+                                        child: const Text('Book'),
                                       ),
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pushNamed(profileRoute);
-                                      },
-                                      child: const Text('Book'),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-
+                );
+              },
+            );
+          },
+        ),
+      );
 
   @override
   Widget buildSuggestions(BuildContext context) {
-   List<String> suggestions = searchResults.where((searchResults) {
-     final result = searchResults.toLowerCase();
-     final input = query.toLowerCase();
+    List<String> suggestions = searchResults.where((searchResults) {
+      final result = searchResults.toLowerCase();
+      final input = query.toLowerCase();
 
-     return result.contains(input);
+      return result.contains(input);
 
-     // stream: FirebaseFirestore.instance.collection('doctor').where('specialisation',isEqualTo: input).snapshots();
+      // stream: FirebaseFirestore.instance.collection('doctor').where('specialisation',isEqualTo: input).snapshots();
+    }).toList();
 
-   }).toList();
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final suggestion = suggestions[index];
 
-   return ListView.builder(
-       itemCount: suggestions.length,
-       itemBuilder: (context, index) {
-         final suggestion = suggestions[index];
-
-         return ListTile(
-           title: Text(suggestion),
-           onTap: () {
-             query = suggestion;
-           },
-         );
-       },
-   );
+        return ListTile(
+          title: Text(suggestion),
+          onTap: () {
+            query = suggestion;
+          },
+        );
+      },
+    );
   }
 }
-
-

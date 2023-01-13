@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import '../constants/route.dart';
 
 class ChatView extends StatefulWidget {
-  const ChatView({super.key});
+  String? role;
+  ChatView(this.role, {super.key});
   @override
-  State<ChatView> createState() => _ChatViewState();
+  State<ChatView> createState() => _ChatViewState(role);
 }
 
 class _ChatViewState extends State<ChatView> {
   final int currentIndex = 2;
+  String? role;
+  _ChatViewState(this.role);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +65,7 @@ class _ChatViewState extends State<ChatView> {
           );
         },
       ),
-      bottomNavigationBar: const FooterView(1),
+      bottomNavigationBar: FooterView(1, role),
     );
   }
 }

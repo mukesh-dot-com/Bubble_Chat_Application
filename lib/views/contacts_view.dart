@@ -2,14 +2,17 @@ import 'package:bubble/views/footer_view.dart';
 import 'package:flutter/material.dart';
 
 class ContactsView extends StatefulWidget {
-  const ContactsView({super.key});
+  String? role;
+  ContactsView(this.role, {super.key});
 
   @override
-  State<ContactsView> createState() => _ContactsViewState();
+  State<ContactsView> createState() => _ContactsViewState(role);
 }
 
 class _ContactsViewState extends State<ContactsView> {
   int index = 2;
+  String? role;
+  _ContactsViewState(this.role);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +26,7 @@ class _ContactsViewState extends State<ContactsView> {
         ),
       ),
       body: const Scaffold(),
-      bottomNavigationBar: const FooterView(2),
+      bottomNavigationBar: FooterView(2, role),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bubble/constants/route.dart';
+import 'package:bubble/views/explore_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 class FormDoctorView extends StatefulWidget {
-  const FormDoctorView({super.key});
+  String? role;
+  FormDoctorView({super.key, required this.role});
 
   @override
   // ignore: library_private_types_in_public_api
-  _FormDoctorViewState createState() => _FormDoctorViewState();
+  _FormDoctorViewState createState() => _FormDoctorViewState(role);
 }
 
 class _FormDoctorViewState extends State<FormDoctorView> {
@@ -21,6 +23,8 @@ class _FormDoctorViewState extends State<FormDoctorView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
   var name = "";
+  String? role;
+  _FormDoctorViewState(this.role);
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +33,6 @@ class _FormDoctorViewState extends State<FormDoctorView> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            //   const Padding(
-            //     padding: EdgeInsets.only(left:15.0,right: 15.0,top:20,bottom: 0),
-            //   ),
             const SizedBox(
               height: 70,
             ),
@@ -174,7 +175,6 @@ class _FormDoctorViewState extends State<FormDoctorView> {
                     )),
               ),
             ),
-
             const Padding(
               padding: EdgeInsets.only(
                 left: 15.0,
@@ -190,7 +190,7 @@ class _FormDoctorViewState extends State<FormDoctorView> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(20)),
               child: MaterialButton(
-                onPressed: () {
+                onPressed: () async {
                   if (nameController.text == "") {
                     return showError("User Name");
                   } else if (specialController.text == "") {
@@ -201,18 +201,25 @@ class _FormDoctorViewState extends State<FormDoctorView> {
                     return showError("About You Field");
                   } else {
                     Map<String, dynamic> doctorData = {
-                      "phone": user?.phoneNumber,
                       "name": nameController.text,
                       "specialisation": specialController.text,
                       "email": emailController.text,
                       "about": aboutController.text,
+                      "image": null,
+                      "phone": user?.phoneNumber,
                     };
                     // print(doctorData);
-                    FirebaseFirestore.instance
-                        .collection("doctor")
-                        .add(doctorData)
-                        .whenComplete(() => {print("success")});
-                    Navigator.of(context).pushNamed(chatRoute);
+                    try {
+                      await FirebaseFirestore.instance
+                          .collection("doctor")
+                          .doc(user?.phoneNumber)
+                          .set(doctorData)
+                          .whenComplete(() => {print("success")});
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ExploreView(role: role)));
+                    } catch (e) {
+                      print("Failure Try Again");
+                    }
                   }
                 },
                 child: const Text(
