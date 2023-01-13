@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class BookView extends StatefulWidget {
@@ -8,6 +9,15 @@ class BookView extends StatefulWidget {
 }
 
 class _BookViewState extends State<BookView> {
+  final user = FirebaseAuth.instance.currentUser;
+  var days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +38,9 @@ class _BookViewState extends State<BookView> {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: ((context, index) {
                   return InkWell(
+                    onTap: () {
+                      // print(user?.phoneNumber);
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(
                         right: 10,
@@ -39,7 +52,11 @@ class _BookViewState extends State<BookView> {
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Center(child: Text('Monday')),
+                      child: Center(
+                        child: Text(
+                          days[index % days.length],
+                        ),
+                      ),
                     ),
                   );
                 }),

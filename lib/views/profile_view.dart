@@ -1,14 +1,146 @@
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:bubble/constants/route.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 
+// ignore: must_be_immutable
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key});
+  QueryDocumentSnapshot<Object?> docs;
+  ProfileView(this.docs, {super.key});
 
   @override
-  State<ProfileView> createState() => _ProfileViewState();
+  State<ProfileView> createState() => _ProfileViewState(docs);
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  QueryDocumentSnapshot<Object?> docs;
+  _ProfileViewState(this.docs);
+  String? mtoken = "";
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  FlutterLocalNotificationsPlugin fltNotification =
+      FlutterLocalNotificationsPlugin();
+  var days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+  ];
+  int time = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermission();
+    getToken();
+    initMessaging();
+  }
+
+  void pushSendMessage(String token, String body, String title) async {
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization':
+              'key=AAAAOV71c80:APA91bEQP_q8VRu2A6dexMANr2NloMKowNRMFmUNs23WkSpMlEoafgU5rr1-S2h8snJ_cF-54doMwASJ4gqeLbnQufC3o3Wr7SzRkhbMBIF184A4AYgeyPtd87Rr1Z1kx3RDq3HkEa_P'
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'status': 'done',
+              'body': body,
+              'title': title,
+            },
+            "notification": <String, dynamic>{
+              "title": title,
+              "body": body,
+              "android_channel_id": "dbfood"
+            },
+            "to": token,
+          },
+        ),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print("error push notification");
+      }
+    }
+  }
+
+  void initMessaging() {
+    var androiInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initSetting = InitializationSettings(android: androiInit);
+    fltNotification = FlutterLocalNotificationsPlugin();
+    fltNotification.initialize(initSetting);
+    var androidDetails = const AndroidNotificationDetails('1', 'channelName');
+    var generalNotificationDetails =
+        NotificationDetails(android: androidDetails);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null) {
+        fltNotification.show(notification.hashCode, notification.title,
+            notification.body, generalNotificationDetails);
+      }
+      fltNotification.initialize(initSetting,
+          onDidReceiveNotificationResponse: (message) {
+        print("Present here pls recognize me");
+        Navigator.of(context).pushNamed(chatRoute);
+      });
+    });
+  }
+
+  void getToken() async {
+    await FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        mtoken = token;
+        print("My token is $mtoken");
+      });
+      saveToken(token!);
+    });
+  }
+
+  void saveToken(String token) async {
+    await FirebaseFirestore.instance
+        .collection("UserTokens")
+        .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+        .set({
+      'token': token,
+    });
+  }
+
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,25 +176,36 @@ class _ProfileViewState extends State<ProfileView> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Dr. Sandeep',
-                            style: TextStyle(
+                          Text(
+                            docs['name'].toString(),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 26),
                           ),
                           const SizedBox(
                             height: 5,
                           ),
-                          const Text(
-                            'Pshyciatrist',
-                            style: TextStyle(fontSize: 16),
+                          Text(
+                            docs['specialisation'].toString(),
+                            style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.left,
                           ),
                           const SizedBox(
                             height: 5,
                           ),
-                          const Text(
-                            'MBBS, Pshycology specialization, KIMS',
-                            style: TextStyle(fontSize: 13),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.email,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                docs['email'].toString(),
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -151,11 +294,11 @@ class _ProfileViewState extends State<ProfileView> {
                 width: MediaQuery.of(context).size.width * 0.95,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Flexible(
                       child: Text(
-                        'Lorem ipsum dolor sit amet, consectetur asjrng adipiscing elitna aliqua. Ut enim ad minim veniam, quis nostrud exeborquip',
-                        style: TextStyle(fontSize: 15),
+                        docs['about'].toString(),
+                        style: const TextStyle(fontSize: 15),
                         textAlign: TextAlign.justify,
                       ),
                     ),
@@ -185,7 +328,7 @@ class _ProfileViewState extends State<ProfileView> {
                           margin: const EdgeInsets.only(
                             right: 10,
                           ),
-                          width: 100,
+                          width: 112,
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
@@ -195,10 +338,13 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                             ),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 8),
-                            child: Text('Monday'),
+                            child: Text(
+                              days[index % days.length],
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       );
@@ -241,7 +387,9 @@ class _ProfileViewState extends State<ProfileView> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(bookRoute);
+                  // Navigator.of(context).pushNamed(bookRoute);
+                  pushSendMessage(mtoken.toString(), "hi hello",
+                      "Hello Namsthe sir you go into fidelity");
                 },
                 child: const Text('View Slots'),
               ),

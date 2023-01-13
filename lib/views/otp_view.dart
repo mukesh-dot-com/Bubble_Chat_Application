@@ -1,22 +1,11 @@
 import 'dart:async';
+import 'package:bubble/constants/route.dart';
 import 'package:bubble/views/login_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pinput/pinput.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-// import 'package:otp_text_field/otp_field.dart';
-// import 'package:otp_text_field/style.dart';
-// OTPTextField(
-// length: 5,
-// width: MediaQuery.of(context).size.width,
-// fieldWidth: 80,
-// style: TextStyle(
-// fontSize: 17
-// ),
-// textFieldAlignment: MainAxisAlignment.spaceAround,
-// fieldStyle: FieldStyle.underline,
-// onCompleted: (pin) {
-// print("Completed: " + pin);
-// },
-// ),
 class OTPView extends StatefulWidget {
   const OTPView({super.key});
 
@@ -26,6 +15,7 @@ class OTPView extends StatefulWidget {
 }
 
 class _OTPViewState extends State<OTPView> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
   int _counter = 60;
   late Timer _timer;
   // var usernameController = TextEditingController();
@@ -47,97 +37,116 @@ class _OTPViewState extends State<OTPView> {
     });
   }
 
+  var code = "";
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: TextStyle(
+        fontSize: 22,
+        color: Theme.of(context).primaryColor,
+        fontWeight: FontWeight.w600,
+      ),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: const Color.fromRGBO(234, 239, 243, 1),
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
+      border: Border.all(
+        color: Theme.of(context).primaryColor,
+      ),
+      borderRadius: BorderRadius.circular(8),
+    );
+
+    final submittedPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration?.copyWith(
+        color: const Color.fromRGBO(234, 239, 243, 1),
+      ),
+    );
     return Scaffold(
       appBar: AppBar(
-        title: const Text('OTP Page'),
-        backgroundColor: Colors.deepPurpleAccent,
+        title: const Text("OTP Page"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(
-                    6,
-                    (index) => SizedBox(
-                          width: 56,
-                          child: TextField(
-                            // controller: controller.otpController[index],
-                            keyboardType: TextInputType.number,
-                            cursorColor: Colors.black,
-                            onChanged: (value) {
-                              if (value.length == 1 && index <= 5) {
-                                FocusScope.of(context).nextFocus();
-                              } else if (value.isEmpty && index > 0) {
-                                FocusScope.of(context).previousFocus();
-                              }
-                            },
-                            style: const TextStyle(),
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide:
-                                      const BorderSide(color: Colors.black),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide:
-                                        const BorderSide(color: Colors.black)),
-                                hintText: "*"),
-                          ),
-                        )),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 300,
+                width: 300,
+                child: Image.asset(
+                  "assets/image1.png",
+                ),
               ),
-            ),
-            Text(
-              '$_counter',
-              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            // ElevatedButton(
-            //     onPressed: () {
-            //       _startTimer();
-            //     },
-            //     child: Text('Start')),
-            // _startTimer();
-            const SizedBox(
-              height: 10,
-            ),
-
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _timer.cancel();
-                    _startTimer();
-                    _counter = 120;
-                  });
+              const Text(
+                "Enter OTP",
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Pinput(
+                defaultPinTheme: defaultPinTheme,
+                focusedPinTheme: focusedPinTheme,
+                submittedPinTheme: submittedPinTheme,
+                length: 6,
+                showCursor: true,
+                onChanged: (value) {
+                  code = value;
                 },
-                child: const Text('Resend')),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const LoginView(),
-                  ),
-                );
-              },
-              child: const Text(
-                'Verify',
-                style: TextStyle(color: Colors.white, fontSize: 30),
               ),
-            ),
-          ],
+              // Text(
+              //   '$_counter',
+              //   style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              // ),
+              const SizedBox(
+                height: 30,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    PhoneAuthCredential credential =
+                        PhoneAuthProvider.credential(
+                      verificationId: LoginView.verify,
+                      smsCode: code,
+                    );
+                    await auth.signInWithCredential(credential);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      roleRoute,
+                      (route) => false,
+                    );
+                  } catch (e) {
+                    Fluttertoast.showToast(
+                      msg: "Invalid OTP",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 10,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  }
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(3.0),
+                  child: Text(
+                    'Verify',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 27,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

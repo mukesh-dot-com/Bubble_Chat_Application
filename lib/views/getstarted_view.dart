@@ -1,4 +1,6 @@
 import 'package:bubble/constants/route.dart';
+import 'package:bubble/views/login_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -91,8 +93,9 @@ class _GetStartedViewState extends State<GetStartedView> {
             margin: const EdgeInsets.only(top: 100),
             child: TextButton(
               onPressed: () {
+                print(FirebaseAuth.instance.currentUser?.phoneNumber);
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil(exploreRoute, (route) => false);
+                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
               },
               style: ButtonStyle(
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(

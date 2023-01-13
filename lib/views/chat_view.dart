@@ -1,6 +1,5 @@
 import 'package:bubble/views/footer_view.dart';
 import 'package:flutter/material.dart';
-
 import '../constants/route.dart';
 
 class ChatView extends StatefulWidget {
@@ -54,8 +53,7 @@ class _ChatViewState extends State<ChatView> {
                 subtitle: const Text('Wait While doctor let\'s you in'),
                 horizontalTitleGap: 22,
                 onTap: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(exploreRoute, (_) => false);
+                  Navigator.of(context).pushNamed(chatUIRoute);
                 },
                 dense: true,
                 enabled: true,
