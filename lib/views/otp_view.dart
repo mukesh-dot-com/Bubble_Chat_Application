@@ -18,28 +18,24 @@ class OTPView extends StatefulWidget {
 
 class _OTPViewState extends State<OTPView> {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  int _counter = 60;
-  late Timer _timer;
+  // int _counter = 60;
+  // late Timer _timer;
   String? role;
-  // var usernameController = TextEditingController();
-  // var phoneController = TextEditingController();
-
-  var otpController = List.generate(6, (index) => TextEditingController());
-  _OTPViewState() {
-    _startTimer();
-  }
-  void _startTimer() {
-    // _counter = 120;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_counter > 0) {
-        setState(() {
-          _counter--;
-        });
-      } else {
-        _timer.cancel();
-      }
-    });
-  }
+  // _OTPViewState() {
+  //   _startTimer();
+  // }
+  // void _startTimer() {
+  //   // _counter = 120;
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     if (_counter > 0) {
+  //       setState(() {
+  //         _counter--;
+  //       });
+  //     } else {
+  //       _timer.cancel();
+  //     }
+  //   });
+  // }
 
   var code = "";
   @override
@@ -127,12 +123,12 @@ class _OTPViewState extends State<OTPView> {
                         .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
                         .get();
                     print(snapShot);
-                    if (!snapShot.exists) {
+                    if (!snapShot.exists || snapShot == null) {
                       final snapShot2 = await FirebaseFirestore.instance
                           .collection("patient")
                           .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
                           .get();
-                      if (!snapShot2.exists) {
+                      if (!snapShot2.exists || snapShot2 == null) {
                         // ignore: use_build_context_synchronously
                         Navigator.of(context).pushNamed(roleRoute);
                       } else {
@@ -169,10 +165,10 @@ class _OTPViewState extends State<OTPView> {
 //       return ExploreView(role: role);
 // }
 
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      roleRoute,
-                      (route) => false,
-                    );
+                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                    //   roleRoute,
+                    //   (route) => false,
+                    // );
                   } catch (e) {
                     Fluttertoast.showToast(
                       msg: "Invalid OTP",

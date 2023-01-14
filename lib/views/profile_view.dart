@@ -1,25 +1,28 @@
 import 'dart:convert';
+import 'package:bubble/views/chat_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:bubble/constants/route.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class ProfileView extends StatefulWidget {
   QueryDocumentSnapshot<Object?> docs;
-  ProfileView(this.docs, {super.key});
+  String? role;
+  ProfileView(this.role, this.docs, {super.key});
 
   @override
-  State<ProfileView> createState() => _ProfileViewState(docs);
+  // ignore: no_logic_in_create_state
+  State<ProfileView> createState() => _ProfileViewState(role, docs);
 }
 
 class _ProfileViewState extends State<ProfileView> {
   QueryDocumentSnapshot<Object?> docs;
-  _ProfileViewState(this.docs);
+  String? role;
+  _ProfileViewState(this.role, this.docs);
   String? mtoken = "";
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   FlutterLocalNotificationsPlugin fltNotification =
@@ -36,6 +39,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void initState() {
+    print(role);
     super.initState();
     requestPermission();
     getToken();
@@ -77,7 +81,7 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   void initMessaging() {
-    var androiInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var androiInit = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var initSetting = InitializationSettings(android: androiInit);
     fltNotification = FlutterLocalNotificationsPlugin();
     fltNotification.initialize(initSetting);
@@ -94,7 +98,8 @@ class _ProfileViewState extends State<ProfileView> {
       fltNotification.initialize(initSetting,
           onDidReceiveNotificationResponse: (message) {
         print("Present here pls recognize me");
-        Navigator.of(context).pushNamed(chatRoute);
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => ChatView(role)));
       });
     });
   }
@@ -323,7 +328,8 @@ class _ProfileViewState extends State<ProfileView> {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: ((context, index) {
                       return InkWell(
-                        overlayColor: MaterialStatePropertyAll(Colors.red),
+                        overlayColor:
+                            const MaterialStatePropertyAll(Colors.red),
                         child: Container(
                           margin: const EdgeInsets.only(
                             right: 10,
@@ -385,14 +391,16 @@ class _ProfileViewState extends State<ProfileView> {
               const SizedBox(
                 height: 20,
               ),
-              TextButton(
-                onPressed: () {
-                  // Navigator.of(context).pushNamed(bookRoute);
-                  pushSendMessage(mtoken.toString(), "hi hello",
-                      "Hello Namsthe sir you go into fidelity");
-                },
-                child: const Text('View Slots'),
-              ),
+              if (role == "patient")
+                TextButton(
+                  onPressed: () {
+                    pushSendMessage(
+                        "cfkLD-UUR3qP62Mao2kgtB:APA91bHmZ7PXzEgNfuCNxgAZDOpCwwHT4Vdf4bi8Z0AzsYMyiXFS1qBAO-SpY09dub2ucF_sRo7QCkwM9r4SAkkLh2vGpm_lC-nZ3P0olrkfuNjDmb0nk2CeHIIx2OMVZM3KA-1Da85s",
+                        "Hey ${docs['name']}",
+                        "Someone is waiting for your appointment, Click on this notification to get into App");
+                  },
+                  child: const Text('View Slots'),
+                ),
               const Divider(
                 thickness: 1.3,
                 height: 20,
