@@ -393,11 +393,22 @@ class _ProfileViewState extends State<ProfileView> {
               ),
               if (role == "patient")
                 TextButton(
-                  onPressed: () {
-                    pushSendMessage(
-                        "cfkLD-UUR3qP62Mao2kgtB:APA91bHmZ7PXzEgNfuCNxgAZDOpCwwHT4Vdf4bi8Z0AzsYMyiXFS1qBAO-SpY09dub2ucF_sRo7QCkwM9r4SAkkLh2vGpm_lC-nZ3P0olrkfuNjDmb0nk2CeHIIx2OMVZM3KA-1Da85s",
-                        "Hey ${docs['name']}",
+                  onPressed: () async {
+                    pushSendMessage(mtoken.toString(), "Hey ${docs['name']}",
                         "Someone is waiting for your appointment, Click on this notification to get into App");
+                    await FirebaseFirestore.instance
+                        .collection("requests")
+                        .doc(
+                            "${FirebaseAuth.instance.currentUser?.phoneNumber}?${docs['phone']}")
+                        .set({
+                      'patient_id':
+                          FirebaseAuth.instance.currentUser?.phoneNumber,
+                      'doctor_id': docs['phone'].toString(),
+                      'checked': false,
+                    });
+                    await Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                            builder: (context) => ChatView(role)));
                   },
                   child: const Text('View Slots'),
                 ),

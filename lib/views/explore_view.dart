@@ -49,332 +49,325 @@ class _ExploreViewState extends State<ExploreView> {
             .doc(user?.phoneNumber)
             .snapshots(),
         builder: (context, snapshot) {
-          return Scaffold(
-            appBar: AppBar(
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.search_rounded),
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: MySearchDelegate(),
-                    );
-                    // Navigator.of(context).restorablePushNamed(profileRoute);
-                    // Navigator.of(context).pushNamed(searchRoute);
-                  },
-                )
-              ],
-              centerTitle: true,
-              title: const Text(
-                "Explore",
-                style: TextStyle(
-                  fontSize: 25,
-                ),
-              ),
-            ),
-            drawer: Drawer(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 60),
-                children: [
-                  const Icon(Icons.account_circle,
-                      size: 120, color: Colors.purple),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    snapshot.data?['name'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                  ),
-                  TextButton(
+          if (snapshot.data != null) {
+            return Scaffold(
+              appBar: AppBar(
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.search_rounded),
                     onPressed: () {
+                      showSearch(
+                        context: context,
+                        delegate: MySearchDelegate(),
+                      );
                       // Navigator.of(context).restorablePushNamed(profileRoute);
-                      print(user?.phoneNumber);
+                      // Navigator.of(context).pushNamed(searchRoute);
                     },
-                    child: const Text(
-                      'View Profile >',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {},
-                    //contentPadding: EdgeInsets.symmetric(horizontal: 30),
-                    title: const Text(
-                      'Explore',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {},
-                    title: const Text(
-                      'Chat',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {},
-                    title: const Text(
-                      'History',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {},
-                    title: const Text(
-                      'Settings',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          loginRoute, (route) => false);
-                    },
-                    title: const Text(
-                      'SignOut',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
                   )
                 ],
+                centerTitle: true,
+                title: const Text(
+                  "Explore",
+                  style: TextStyle(
+                    fontSize: 25,
+                  ),
+                ),
               ),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    'Select Category',
-                    style: TextStyle(fontSize: 25),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 350,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.purple,
-                          ),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton(
-                            focusColor: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            value: value,
-                            items: items.map<DropdownMenuItem<String>>(
-                              (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              },
-                            ).toList(),
-                            hint: const Text("Select Category"),
-                            onChanged: (value) {
-                              setState(
-                                () {
-                                  this.value = value;
-                                  flag = false;
-                                },
-                              );
-                              if (this.value == 'All') {
-                                flag = true;
-                              }
-                            },
-                          ),
+              drawer: Drawer(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 60),
+                  children: [
+                    const Icon(Icons.account_circle,
+                        size: 120, color: Colors.purple),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                      snapshot.data?['name'],
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 22),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        // Navigator.of(context).restorablePushNamed(profileRoute);
+                        print(user?.phoneNumber);
+                      },
+                      child: const Text(
+                        'View Profile >',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          decoration: TextDecoration.underline,
                         ),
                       ),
-                      // Container(
-                      //   width: 80,
-                      //   height: 45,
-                      //   decoration: BoxDecoration(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       color: Theme.of(context).primaryColor),
-                      //   margin: const EdgeInsets.all(10),
-                      //   child: TextButton(
-                      //     onPressed: () {},
-                      //     child: const Text(
-                      //       'Search',
-                      //       style: TextStyle(color: Colors.white, fontSize: 15),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                  Expanded(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: (flag)
-                          ? FirebaseFirestore.instance
-                              .collection('doctor')
-                              .snapshots()
-                          : FirebaseFirestore.instance
-                              .collection('doctor')
-                              .where('specialisation', isEqualTo: this.value)
-                              .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        }
-                        if (snapshot.hasError) {
-                          return const Text("Something Went Wrong");
-                        }
-                        return ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          padding: const EdgeInsets.all(3.0),
-                          itemCount: snapshot.data?.docs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ProfileView(
-                                        role, snapshot.data!.docs[index])));
+                    ),
+                    ListTile(
+                      onTap: () {},
+                      //contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                      title: const Text(
+                        'Explore',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {},
+                      title: const Text(
+                        'Chat',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {},
+                      title: const Text(
+                        'History',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {},
+                      title: const Text(
+                        'Settings',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        FirebaseAuth.instance.signOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            loginRoute, (route) => false);
+                      },
+                      title: const Text(
+                        'SignOut',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      'Select Category',
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 350,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.purple,
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                              focusColor: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              value: value,
+                              items: items.map<DropdownMenuItem<String>>(
+                                (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                },
+                              ).toList(),
+                              hint: const Text("Select Category"),
+                              onChanged: (value) {
+                                setState(
+                                  () {
+                                    this.value = value;
+                                    flag = false;
+                                  },
+                                );
+                                if (this.value == 'All') {
+                                  flag = true;
+                                }
                               },
-                              child: Container(
-                                height: 160,
-                                margin: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 161, 70, 213),
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                    bottom: Radius.circular(30),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: (flag)
+                            ? FirebaseFirestore.instance
+                                .collection('doctor')
+                                .snapshots()
+                            : FirebaseFirestore.instance
+                                .collection('doctor')
+                                .where('specialisation', isEqualTo: this.value)
+                                .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+                          if (snapshot.hasError) {
+                            return const Text("Something Went Wrong");
+                          }
+                          return ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            padding: const EdgeInsets.all(3.0),
+                            itemCount: snapshot.data?.docs.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ProfileView(
+                                          role, snapshot.data!.docs[index])));
+                                },
+                                child: Container(
+                                  height: 160,
+                                  margin: const EdgeInsets.all(10),
+                                  decoration: const BoxDecoration(
+                                    color: Color.fromARGB(255, 161, 70, 213),
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(10),
+                                      bottom: Radius.circular(30),
+                                    ),
                                   ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.3,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.35,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                            photos[(index) % photos.length],
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.3,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.35,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              photos[(index) % photos.length],
+                                            ),
+                                            alignment: Alignment.center,
+                                            opacity: 0.9,
+                                            fit: BoxFit.fill,
                                           ),
-                                          alignment: Alignment.center,
-                                          opacity: 0.9,
-                                          fit: BoxFit.fill,
                                         ),
                                       ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.5,
-                                      //decoration: BoxDecoration(border: Border.all(width: 2)),
-                                      padding: const EdgeInsets.only(
-                                          top: 8, left: 10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            snapshot.data!.docs[index]['name']
-                                                .toString(),
-                                            style: const TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 253, 244, 244),
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.all(2),
-                                          ),
-                                          Text(
-                                            snapshot.data!
-                                                .docs[index]['specialisation']
-                                                .toString(),
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12),
-                                          ),
-                                          const Padding(
-                                              padding: EdgeInsets.all(3)),
-                                          SizedBox(
-                                            height: 40,
-                                            child: Text(
-                                              snapshot
-                                                  .data!.docs[index]['about']
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.5,
+                                        //decoration: BoxDecoration(border: Border.all(width: 2)),
+                                        padding: const EdgeInsets.only(
+                                            top: 8, left: 10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              snapshot.data!.docs[index]['name']
                                                   .toString(),
                                               style: const TextStyle(
-                                                  color: Colors.white),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
+                                                color: Color.fromARGB(
+                                                    255, 253, 244, 244),
+                                                fontSize: 22,
+                                              ),
                                             ),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: const [
-                                                  Icon(Icons.star),
-                                                  Icon(Icons.star),
-                                                  Icon(Icons.star),
-                                                  Icon(Icons.star),
-                                                ],
+                                            const Padding(
+                                              padding: EdgeInsets.all(2),
+                                            ),
+                                            Text(
+                                              snapshot.data!
+                                                  .docs[index]['specialisation']
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ),
+                                            const Padding(
+                                                padding: EdgeInsets.all(3)),
+                                            SizedBox(
+                                              height: 40,
+                                              child: Text(
+                                                snapshot
+                                                    .data!.docs[index]['about']
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              Column(
-                                                children: [
-                                                  TextButton(
-                                                    style: const ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStatePropertyAll(
-                                                              Colors.white),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: const [
+                                                    Icon(Icons.star),
+                                                    Icon(Icons.star),
+                                                    Icon(Icons.star),
+                                                    Icon(Icons.star),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    TextButton(
+                                                      style: const ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStatePropertyAll(
+                                                                Colors.white),
+                                                      ),
+                                                      onPressed: () {},
+                                                      child: Text(
+                                                          (role == "doctor")
+                                                              ? 'view'
+                                                              : 'book'),
                                                     ),
-                                                    onPressed: () {},
-                                                    child: Text(
-                                                        (role == "doctor")
-                                                            ? 'view'
-                                                            : 'book'),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            bottomNavigationBar: FooterView(0, role),
-          );
+              bottomNavigationBar: FooterView(0, role),
+            );
+          } else {
+            return const Scaffold();
+          }
         });
   }
 }
@@ -412,7 +405,7 @@ class MySearchDelegate extends SearchDelegate {
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('doctor')
-              .where('name', isEqualTo: query)
+              .where('name', isEqualTo: query.trim())
               .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -516,7 +509,7 @@ class MySearchDelegate extends SearchDelegate {
                                           Navigator.of(context)
                                               .pushNamed(profileRoute);
                                         },
-                                        child: const Text('Book'),
+                                        child: const Scaffold(),
                                       ),
                                     ],
                                   ),

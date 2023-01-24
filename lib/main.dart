@@ -4,7 +4,6 @@ import 'package:bubble/views/chat_UI_view.dart';
 import 'package:bubble/views/explore_view.dart';
 import 'package:bubble/views/getstarted_view.dart';
 import 'package:bubble/views/login_view.dart';
-import 'package:bubble/views/message_view.dart';
 import 'package:bubble/views/otp_view.dart';
 import 'package:bubble/views/role_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,13 +31,13 @@ void main() async {
       themeMode: ThemeMode.dark,
       home: await checkUser(),
       routes: {
-        messageRoute: (context) => const MessageView(),
+        // messageRoute: (context) => const MessageView(),
         // profileRoute: (context) => const ProfileView(),
         bookRoute: (context) => const BookView(),
         otpRoute: (context) => const OTPView(),
         loginRoute: (context) => const LoginView(),
         roleRoute: (context) => const RoleView(),
-        chatUIRoute: (context) => const ChatUserInterfaceView(),
+        // chatUIRoute: (context) => const ChatUserInterfaceView(),
       },
     ),
   );

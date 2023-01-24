@@ -303,7 +303,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             FirebaseFirestore.instance
                                 .collection("patient")
                                 .doc(user?.phoneNumber)
-                                .set(patientData)
+                                .update(patientData)
                                 .whenComplete(() => {print("success")});
                           },
                           child: const Text(

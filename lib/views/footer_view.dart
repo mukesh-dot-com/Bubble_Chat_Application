@@ -1,10 +1,10 @@
-import 'package:bubble/constants/route.dart';
 import 'package:bubble/views/chat_view.dart';
 import 'package:bubble/views/contacts_view.dart';
 import 'package:bubble/views/explore_view.dart';
 import 'package:bubble/views/setting_view.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class FooterView extends StatefulWidget {
   final int index;
   String? role;
@@ -47,25 +47,27 @@ class _FooterViewState extends State<FooterView> {
         ),
       ],
       onTap: (index) {
-        setState(() {
-          if (_currentIndex == index) {
-          } else {
-            _currentIndex = index;
-            if (_currentIndex == 0) {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => ExploreView(role: role)));
-            } else if (_currentIndex == 1) {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => ChatView(role)));
-            } else if (_currentIndex == 2) {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => ContactsView(role)));
-            } else if (_currentIndex == 3) {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => SettingView(role)));
+        setState(
+          () {
+            if (_currentIndex == index) {
+            } else {
+              _currentIndex = index;
+              if (_currentIndex == 0) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => ExploreView(role: role)));
+              } else if (_currentIndex == 1) {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => ChatView(role)));
+              } else if (_currentIndex == 2) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => ContactsView(role)));
+              } else if (_currentIndex == 3) {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => SettingView(role)));
+              }
             }
-          }
-        });
+          },
+        );
       },
     );
   }
