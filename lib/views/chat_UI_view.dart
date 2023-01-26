@@ -1,7 +1,13 @@
-// ignore: file_names
+import 'dart:io';
+import 'package:bubble/views/explore_view.dart';
+import 'package:bubble/views/patient_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:quickalert/quickalert.dart';
 
 // ignore: must_be_immutable
 class ChatUserInterfaceView extends StatefulWidget {
@@ -21,11 +27,13 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
   _ChatUserInterfaceViewState(this.snapshot, this.role) {
     print(snapshot?.data['name']);
   }
+  String? imageURL;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [],
         elevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).primaryColor,
@@ -34,48 +42,80 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
             padding: const EdgeInsets.only(right: 16),
             child: Row(
               children: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
+                SizedBox(
+                  width: 20,
+                ),
+                const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: InkWell(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          snapshot?.data['name'],
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text(
+                          "Online",
+                          style: TextStyle(color: Colors.white, fontSize: 13),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(
-                  width: 2,
+                  width: 190,
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        snapshot?.data['name'],
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      const Text(
-                        "Online",
-                        style: TextStyle(color: Colors.white, fontSize: 13),
-                      ),
-                    ],
+                Container(
+                  height: 40,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.red,
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.confirm,
+                          text: "Are You sure that you want to end the chat",
+                          confirmBtnColor: Colors.purple,
+                          onConfirmBtnTap: () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => ExploreView(role: role),
+                              ),
+                            );
+                          });
+                    },
+                    child: const Text(
+                      "EXIT",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-                const Icon(Icons.search),
               ],
             ),
           ),
         ),
       ),
       body: SingleChildScrollView(
+        reverse: true,
+        scrollDirection: Axis.vertical,
         child: Column(
           children: [
             Container(
@@ -161,30 +201,37 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: SizedBox(
-                                              child: Text(
-                                                qs['message'],
-                                                softWrap: true,
-                                                style: const TextStyle(
-                                                  fontSize: 15,
-                                                  color: Colors.white,
+                                              child: (qs['image'] == null)
+                                                  ? Text(
+                                                      qs['message'],
+                                                      softWrap: true,
+                                                      style: const TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.white,
+                                                      ),
+                                                    )
+                                                  : Image.network(
+                                                      qs['image'],
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                            ),
+                                          ),
+                                        ),
+                                        (qs['image'] == null)
+                                            ? Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 20,
+                                                  right: 5,
+                                                  left: 5,
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 20,
-                                            right: 5,
-                                            left: 5,
-                                          ),
-                                          child: Text(
-                                            "${d.hour}:${d.minute}",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
+                                                child: Text(
+                                                  "${d.hour}:${d.minute}",
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              )
+                                            : const Text(""),
                                       ],
                                     ),
                                   ),
@@ -221,7 +268,67 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                       color: Theme.of(context).primaryColor,
                     ),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        ImagePicker imagePicker = ImagePicker();
+                        XFile? file = await imagePicker.pickImage(
+                            source: ImageSource.gallery);
+                        print('${file?.path}');
+                        if (file == null) return;
+                        String uniqueFileName =
+                            DateTime.now().millisecondsSinceEpoch.toString();
+
+                        Reference referenceRoot =
+                            FirebaseStorage.instance.ref();
+                        Reference referenceDirImages =
+                            referenceRoot.child('images');
+                        Reference refImage =
+                            referenceDirImages.child(uniqueFileName);
+
+                        try {
+                          //Store File
+                          await refImage.putFile(File(file.path));
+                          imageURL = await refImage.getDownloadURL();
+                          if (role == 'patient') {
+                            await FirebaseFirestore.instance
+                                .collection("messages")
+                                .doc(
+                                    "${FirebaseAuth.instance.currentUser?.phoneNumber}?${snapshot?.data['phone']}")
+                                .collection("messagelist")
+                                .add(
+                              {
+                                'message': null,
+                                'image': imageURL,
+                                'sender': FirebaseAuth
+                                    .instance.currentUser?.phoneNumber,
+                                'receiver': snapshot?.data['phone'],
+                                'time': DateTime.now(),
+                              },
+                            );
+                          } else {
+                            if (role == 'doctor') {
+                              FirebaseFirestore.instance
+                                  .collection("messages")
+                                  .doc(
+                                      "${snapshot?.data['phone']}?${FirebaseAuth.instance.currentUser?.phoneNumber}")
+                                  .collection("messagelist")
+                                  .add(
+                                {
+                                  'message': message.text,
+                                  'image': null,
+                                  'sender': FirebaseAuth
+                                      .instance.currentUser?.phoneNumber,
+                                  'receiver': snapshot?.data['phone'],
+                                  'time': DateTime.now(),
+                                },
+                              );
+                              message.clear();
+                            }
+                          }
+                          message.clear();
+                        } catch (e) {
+                          //Error Will go here.
+                        }
+                      },
                       icon: const Icon(
                         Icons.add,
                         color: Colors.white,
@@ -270,6 +377,7 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                                 .add(
                               {
                                 'message': message.text,
+                                'image': null,
                                 'sender': FirebaseAuth
                                     .instance.currentUser?.phoneNumber,
                                 'receiver': snapshot?.data['phone'],
@@ -287,6 +395,7 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                                 .add(
                               {
                                 'message': message.text,
+                                'image': null,
                                 'sender': FirebaseAuth
                                     .instance.currentUser?.phoneNumber,
                                 'receiver': snapshot?.data['phone'],

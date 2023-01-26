@@ -1,6 +1,7 @@
 import 'package:bubble/constants/route.dart';
 import 'package:bubble/views/book_view.dart';
 import 'package:bubble/views/chat_UI_view.dart';
+import 'package:bubble/views/chat_view.dart';
 import 'package:bubble/views/explore_view.dart';
 import 'package:bubble/views/getstarted_view.dart';
 import 'package:bubble/views/login_view.dart';
@@ -37,6 +38,7 @@ void main() async {
         otpRoute: (context) => const OTPView(),
         loginRoute: (context) => const LoginView(),
         roleRoute: (context) => const RoleView(),
+        // chatRoute: (context) => ChatView(),
         // chatUIRoute: (context) => const ChatUserInterfaceView(),
       },
     ),
@@ -44,11 +46,12 @@ void main() async {
 }
 
 checkUser() async {
-  if (FirebaseAuth.instance.currentUser == null) {
-    print(FirebaseAuth.instance.currentUser);
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    print(user);
     return const GetStartedView();
   } else {
-    print(FirebaseAuth.instance.currentUser);
+    print(user);
     final snapShot = await FirebaseFirestore.instance
         .collection("doctor")
         .doc(FirebaseAuth.instance.currentUser?.phoneNumber)

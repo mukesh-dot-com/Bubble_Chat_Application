@@ -164,10 +164,13 @@ class _ProfileViewState extends State<ProfileView> {
                 child: Row(
                   children: [
                     Column(
-                      children: const [
+                      children: [
                         CircleAvatar(
                           radius: 65,
-                          backgroundImage: AssetImage('assets/doctor.jpg'),
+                          backgroundImage: (docs['image'] == null)
+                              ? const NetworkImage(
+                                  "https://th.bing.com/th/id/R.5ab3c6cef7371558452991283427f99a?rik=spJHOzCaiPrxRg&riu=http%3a%2f%2fwww.citylifecarehospital.com%2fcm-admin%2fuploads%2fimage%2f2131-10-doctor-icon-iconbunny.jpg&ehk=d4f4z7ssE4CYT3GFzcECCiy0hXItS3SqZdW5wkadXQ8%3d&risl=&pid=ImgRaw&r=0")
+                              : NetworkImage(docs['image']),
                         ),
                       ],
                     ),
@@ -394,7 +397,9 @@ class _ProfileViewState extends State<ProfileView> {
               if (role == "patient")
                 TextButton(
                   onPressed: () async {
-                    pushSendMessage(mtoken.toString(), "Hey ${docs['name']}",
+                    pushSendMessage(
+                        "fx-kbMpYTE2jMLtUmFlQzJ:APA91bFz-DNpIyTc0uFdOMhWlWvAASo2tjWaMixQilnWurcO-eJcQh8HzXapKjkKwP4GF6ru7WzBBE0k8mFCImtYkmyzjlYIZJajpvqUNvlHRYGXrC_Z__AEBQ4U150Rj4joUP-P7ziB",
+                        "Hey ${docs['name']}",
                         "Someone is waiting for your appointment, Click on this notification to get into App");
                     await FirebaseFirestore.instance
                         .collection("requests")

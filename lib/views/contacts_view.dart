@@ -5,12 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../constants/route.dart';
 import 'chat_UI_view.dart';
+import 'dummy_chat_view.dart';
 
+// ignore: must_be_immutable
 class ContactsView extends StatefulWidget {
   String? role;
   ContactsView(this.role, {super.key});
 
   @override
+  // ignore: no_logic_in_create_state
   State<ContactsView> createState() => _ContactsViewState(role);
 }
 
@@ -25,8 +28,9 @@ class _ContactsViewState extends State<ContactsView> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Contacts',
+          'History',
           style: TextStyle(
             fontSize: 25,
           ),
@@ -59,7 +63,7 @@ class _ContactsViewState extends State<ContactsView> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          ChatUserInterfaceView(
+                                          DummyChatUserInterfaceView(
                                         snapshot,
                                         role,
                                       ),
@@ -68,10 +72,10 @@ class _ContactsViewState extends State<ContactsView> {
                                 }
                               },
                               child: Container(
-                                height: 140,
+                                height: 105,
                                 margin: const EdgeInsets.all(10),
                                 decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 161, 70, 213),
+                                  // color: Color.fromARGB(255, 161, 70, 213),
                                   borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(10),
                                     bottom: Radius.circular(30),
@@ -80,20 +84,18 @@ class _ContactsViewState extends State<ContactsView> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.2,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.25,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                            "assets/doctor.jpg",
+                                      margin: const EdgeInsets.only(
+                                        right: 10,
+                                      ),
+                                      height: 55,
+                                      width: 55,
+                                      child: CircleAvatar(
+                                        minRadius: 10,
+                                        child: Text(
+                                          snapshot.data?['name'][0],
+                                          style: const TextStyle(
+                                            fontSize: 28,
                                           ),
-                                          alignment: Alignment.center,
-                                          opacity: 0.9,
-                                          fit: BoxFit.fill,
                                         ),
                                       ),
                                     ),
@@ -110,9 +112,9 @@ class _ContactsViewState extends State<ContactsView> {
                                           Text(
                                             snapshot.data?['name'],
                                             style: const TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 253, 244, 244),
-                                              fontSize: 22,
+                                              // color: Color.fromARGB(
+                                              //     255, 253, 244, 244),
+                                              fontSize: 20,
                                             ),
                                           ),
                                           const Padding(
@@ -120,44 +122,57 @@ class _ContactsViewState extends State<ContactsView> {
                                           Text(
                                             snapshot.data?['specialisation'],
                                             style: const TextStyle(
-                                              color: Colors.white,
+                                              // color: Colors.white,
                                               fontSize: 12,
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            height: 6,
                                           ),
                                           const Text(
                                             "Previously chatted at 12th Feb 2023",
                                             style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              TextButton(
-                                                style: const ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStatePropertyAll(
-                                                          Colors.white),
+                                                // color: Colors.white,
                                                 ),
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pushReplacement(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const UserInterfaceView(),
-                                                    ),
-                                                  );
-                                                },
-                                                child: const Text('View'),
-                                              ),
-                                            ],
                                           ),
                                         ],
                                       ),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 20, bottom: 20),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          TextButton(
+                                            style: const ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                      Colors.purple),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DummyChatUserInterfaceView(
+                                                          snapshot, role),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text(
+                                              'View',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Divider(
+                                      height: 20,
+                                      thickness: 1,
+                                      color: Color.fromARGB(255, 179, 178, 178),
                                     ),
                                   ],
                                 ),

@@ -47,6 +47,7 @@ dependencies:
   http: ^0.13.5
   image_picker: ^0.8.6
   firebase_storage: ^11.0.10
+  quickalert:
 
 dev_dependencies:
   flutter_test:

@@ -27,6 +27,7 @@ class _ChatViewState extends State<ChatView> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        automaticallyImplyLeading: false,
         title: const Text(
           "Appointments",
           style: TextStyle(
@@ -74,6 +75,8 @@ class _ChatViewState extends State<ChatView> {
                                       ),
                                     ),
                                   );
+                                } else {
+                                  print("yet to be sent in");
                                 }
                               },
                               child: Container(
@@ -94,12 +97,15 @@ class _ChatViewState extends State<ChatView> {
                                               0.3,
                                       width: MediaQuery.of(context).size.width *
                                           0.35,
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         image: DecorationImage(
-                                          image: AssetImage(
-                                            "assets/doctor.jpg",
-                                          ),
+                                          image: (snapshot.data?['image'] ==
+                                                  null)
+                                              ? const NetworkImage(
+                                                  "https://th.bing.com/th/id/R.5ab3c6cef7371558452991283427f99a?rik=spJHOzCaiPrxRg&riu=http%3a%2f%2fwww.citylifecarehospital.com%2fcm-admin%2fuploads%2fimage%2f2131-10-doctor-icon-iconbunny.jpg&ehk=d4f4z7ssE4CYT3GFzcECCiy0hXItS3SqZdW5wkadXQ8%3d&risl=&pid=ImgRaw&r=0")
+                                              : NetworkImage(
+                                                  snapshot.data?['image']),
                                           alignment: Alignment.center,
                                           opacity: 0.9,
                                           fit: BoxFit.fill,

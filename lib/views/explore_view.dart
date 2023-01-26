@@ -1,6 +1,9 @@
 import 'package:bubble/constants/route.dart';
+import 'package:bubble/views/chat_view.dart';
+import 'package:bubble/views/contacts_view.dart';
 import 'package:bubble/views/footer_view.dart';
 import 'package:bubble/views/profile_view.dart';
+import 'package:bubble/views/setting_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -77,8 +80,22 @@ class _ExploreViewState extends State<ExploreView> {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(vertical: 60),
                   children: [
-                    const Icon(Icons.account_circle,
-                        size: 120, color: Colors.purple),
+                    // const Icon(Icons.account_circle,
+                    //     size: 120, color: Colors.purple),
+                    Container(
+                      height: 150,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.scaleDown,
+                          image: (snapshot.data?['image'] == null)
+                              ? const NetworkImage(
+                                  "https://th.bing.com/th/id/R.5ab3c6cef7371558452991283427f99a?rik=spJHOzCaiPrxRg&riu=http%3a%2f%2fwww.citylifecarehospital.com%2fcm-admin%2fuploads%2fimage%2f2131-10-doctor-icon-iconbunny.jpg&ehk=d4f4z7ssE4CYT3GFzcECCiy0hXItS3SqZdW5wkadXQ8%3d&risl=&pid=ImgRaw&r=0")
+                              : NetworkImage(snapshot.data?['image']),
+                        ),
+                      ),
+                    ),
                     const SizedBox(
                       height: 12,
                     ),
@@ -90,7 +107,8 @@ class _ExploreViewState extends State<ExploreView> {
                     ),
                     TextButton(
                       onPressed: () {
-                        // Navigator.of(context).restorablePushNamed(profileRoute);
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => SettingView(role)));
                         print(user?.phoneNumber);
                       },
                       child: const Text(
@@ -103,7 +121,9 @@ class _ExploreViewState extends State<ExploreView> {
                       ),
                     ),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
                       //contentPadding: EdgeInsets.symmetric(horizontal: 30),
                       title: const Text(
                         'Explore',
@@ -113,7 +133,10 @@ class _ExploreViewState extends State<ExploreView> {
                       ),
                     ),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => ChatView(role)));
+                      },
                       title: const Text(
                         'Chat',
                         style: TextStyle(
@@ -122,7 +145,10 @@ class _ExploreViewState extends State<ExploreView> {
                       ),
                     ),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => ContactsView(role)));
+                      },
                       title: const Text(
                         'History',
                         style: TextStyle(
@@ -131,7 +157,10 @@ class _ExploreViewState extends State<ExploreView> {
                       ),
                     ),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => SettingView(role)));
+                      },
                       title: const Text(
                         'Settings',
                         style: TextStyle(
@@ -237,9 +266,14 @@ class _ExploreViewState extends State<ExploreView> {
                             itemBuilder: (BuildContext context, int index) {
                               return InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
                                       builder: (context) => ProfileView(
-                                          role, snapshot.data!.docs[index])));
+                                        role,
+                                        snapshot.data!.docs[index],
+                                      ),
+                                    ),
+                                  );
                                 },
                                 child: Container(
                                   height: 160,
@@ -263,9 +297,13 @@ class _ExploreViewState extends State<ExploreView> {
                                         decoration: BoxDecoration(
                                           shape: BoxShape.rectangle,
                                           image: DecorationImage(
-                                            image: AssetImage(
-                                              photos[(index) % photos.length],
-                                            ),
+                                            image: (snapshot.data?.docs[index]
+                                                        ['image'] ==
+                                                    null)
+                                                ? const NetworkImage(
+                                                    "https://th.bing.com/th/id/R.5ab3c6cef7371558452991283427f99a?rik=spJHOzCaiPrxRg&riu=http%3a%2f%2fwww.citylifecarehospital.com%2fcm-admin%2fuploads%2fimage%2f2131-10-doctor-icon-iconbunny.jpg&ehk=d4f4z7ssE4CYT3GFzcECCiy0hXItS3SqZdW5wkadXQ8%3d&risl=&pid=ImgRaw&r=0")
+                                                : NetworkImage(snapshot.data
+                                                    ?.docs[index]['image']),
                                             alignment: Alignment.center,
                                             opacity: 0.9,
                                             fit: BoxFit.fill,
