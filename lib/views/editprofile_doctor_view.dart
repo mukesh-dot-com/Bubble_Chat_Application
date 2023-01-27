@@ -72,22 +72,26 @@ class _EditProfileDoctorViewState extends State<EditProfileDoctorView> {
                             width: 130,
                             height: 130,
                             decoration: BoxDecoration(
-                                border: Border.all(
-                                    width: 4,
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor),
-                                boxShadow: [
-                                  BoxShadow(
-                                      spreadRadius: 2,
-                                      blurRadius: 10,
-                                      color: Colors.black.withOpacity(0.1),
-                                      offset: const Offset(0, 10))
-                                ],
-                                shape: BoxShape.circle,
-                                image: const DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
-                                        "https://th.bing.com/th/id/OIP.ApSv_ssRiQEvVrmBZtCBSQHaI3?pid=ImgDet&rs=1"))),
+                              border: Border.all(
+                                  width: 4,
+                                  color: Theme.of(context)
+                                      .scaffoldBackgroundColor),
+                              boxShadow: [
+                                BoxShadow(
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    color: Colors.black.withOpacity(0.1),
+                                    offset: const Offset(0, 10))
+                              ],
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: (snapshot.data?["image"] == null)
+                                    ? const NetworkImage(
+                                        "https://th.bing.com/th/id/R.5ab3c6cef7371558452991283427f99a?rik=spJHOzCaiPrxRg&riu=http%3a%2f%2fwww.citylifecarehospital.com%2fcm-admin%2fuploads%2fimage%2f2131-10-doctor-icon-iconbunny.jpg&ehk=d4f4z7ssE4CYT3GFzcECCiy0hXItS3SqZdW5wkadXQ8%3d&risl=&pid=ImgRaw&r=0")
+                                    : NetworkImage(snapshot.data?["image"]),
+                              ),
+                            ),
                           ),
                           Positioned(
                               bottom: 0,

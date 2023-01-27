@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quickalert/quickalert.dart';
 
 class EditProfileView extends StatefulWidget {
   String? role;
@@ -86,11 +87,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                                     offset: const Offset(0, 10))
                               ],
                               shape: BoxShape.circle,
-                              image: const DecorationImage(
+                              image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                  "https://th.bing.com/th/id/OIP.ApSv_ssRiQEvVrmBZtCBSQHaI3?pid=ImgDet&rs=1",
-                                ),
+                                image: (snapshot.data?["image"] == null)
+                                    ? const NetworkImage(
+                                        "https://th.bing.com/th/id/R.5ab3c6cef7371558452991283427f99a?rik=spJHOzCaiPrxRg&riu=http%3a%2f%2fwww.citylifecarehospital.com%2fcm-admin%2fuploads%2fimage%2f2131-10-doctor-icon-iconbunny.jpg&ehk=d4f4z7ssE4CYT3GFzcECCiy0hXItS3SqZdW5wkadXQ8%3d&risl=&pid=ImgRaw&r=0")
+                                    : NetworkImage(snapshot.data?["image"]),
                               ),
                             ),
                           ),
@@ -300,11 +302,30 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   : weightController.text,
                             };
                             print(patientData);
-                            FirebaseFirestore.instance
-                                .collection("patient")
-                                .doc(user?.phoneNumber)
-                                .update(patientData)
-                                .whenComplete(() => {print("success")});
+                            QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.confirm,
+                              confirmBtnText: "Yes",
+                              cancelBtnText: "No",
+                              confirmBtnColor: Colors.purple,
+                              text:
+                                  "Are you sure that you want to overwrite the above changes",
+                              onConfirmBtnTap: () {
+                                FirebaseFirestore.instance
+                                    .collection("patient")
+                                    .doc(user?.phoneNumber)
+                                    .update(patientData)
+                                    .whenComplete(
+                                      () => {
+                                        QuickAlert.show(
+                                          context: context,
+                                          type: QuickAlertType.success,
+                                          confirmBtnColor: Colors.purple,
+                                        )
+                                      },
+                                    );
+                              },
+                            );
                           },
                           child: const Text(
                             "SAVE",

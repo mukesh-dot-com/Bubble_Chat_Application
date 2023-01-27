@@ -1,9 +1,11 @@
 import 'package:bubble/views/chat_UI_view.dart';
 import 'package:bubble/views/footer_view.dart';
-import 'package:bubble/views/user_interface_view.dart';
+import 'package:bubble/views/patient_details_view.dart';
+import 'package:bubble/views/setting_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:quickalert/quickalert.dart';
 import '../constants/route.dart';
 
 // ignore: must_be_immutable
@@ -76,15 +78,18 @@ class _ChatViewState extends State<ChatView> {
                                     ),
                                   );
                                 } else {
-                                  print("yet to be sent in");
+                                  showWait(context);
                                 }
                               },
                               child: Container(
                                 height: 160,
                                 margin: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 161, 70, 213),
-                                  borderRadius: BorderRadius.vertical(
+                                decoration: BoxDecoration(
+                                  color: (snapshot2.data?.docs[index]
+                                          ['checked'])
+                                      ? const Color.fromARGB(255, 161, 70, 213)
+                                      : Colors.grey,
+                                  borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(10),
                                     bottom: Radius.circular(30),
                                   ),
@@ -154,30 +159,28 @@ class _ChatViewState extends State<ChatView> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             children: [
-                                              TextButton(
-                                                style: const ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStatePropertyAll(
-                                                          Colors.white),
-                                                ),
-                                                onPressed: () {
-                                                  if (!snapshot2
-                                                          .data?.docs[index]
-                                                      ['checked']) {
-                                                    print(
-                                                        "Doctor didnt enabled yet");
-                                                  } else {
-                                                    Navigator.of(context)
-                                                        .pushReplacement(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const UserInterfaceView(),
+                                              (snapshot2.data?.docs[index]
+                                                      ['checked'])
+                                                  ? TextButton(
+                                                      style: const ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStatePropertyAll(
+                                                                Colors.white),
                                                       ),
-                                                    );
-                                                  }
-                                                },
-                                                child: const Text('Chat'),
-                                              ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pushReplacement(
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                ChatUserInterfaceView(
+                                                                    snapshot,
+                                                                    role),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: const Text('Chat'),
+                                                    )
+                                                  : const SizedBox(),
                                             ],
                                           ),
                                         ],
@@ -313,9 +316,15 @@ class _ChatViewState extends State<ChatView> {
                                                             Colors.white),
                                                   ),
                                                   onPressed: () {
-                                                    Navigator.of(context)
-                                                        .pushNamed(
-                                                            profileRoute);
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PatientDetailsView(
+                                                          snapshot
+                                                              .data?['phone'],
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
                                                   child: const Text(
                                                       'View Profile'),
@@ -333,6 +342,8 @@ class _ChatViewState extends State<ChatView> {
                                                     if (!snapshot2
                                                             .data?.docs[index]
                                                         ['checked']) {
+                                                      print(
+                                                          "${snapshot2.data?.docs[index]['patient_id']}?${user?.phoneNumber}");
                                                       FirebaseFirestore.instance
                                                           .collection(
                                                               "requests")
@@ -340,16 +351,19 @@ class _ChatViewState extends State<ChatView> {
                                                               "${snapshot2.data?.docs[index]['patient_id']}?${user?.phoneNumber}")
                                                           .update(
                                                         {
-                                                          "checked": true,
+                                                          'checked': true,
                                                         },
                                                       );
                                                     } else {
                                                       Navigator.of(context)
                                                           .pushReplacement(
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          UserInterfaceView()));
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ChatUserInterfaceView(
+                                                                  snapshot,
+                                                                  role),
+                                                        ),
+                                                      );
                                                     }
                                                   },
                                                   child: (!snapshot2
@@ -380,4 +394,14 @@ class _ChatViewState extends State<ChatView> {
       bottomNavigationBar: FooterView(1, role),
     );
   }
+}
+
+void showWait(context) {
+  QuickAlert.show(
+    context: context,
+    type: QuickAlertType.error,
+    text: "Doctor hasn't accepted your request, please wait for sometime",
+    // confirmBtnText: "",
+    confirmBtnColor: Colors.purple,
+  );
 }

@@ -5,6 +5,7 @@ import 'package:bubble/views/correct_settings_view.dart';
 import 'package:bubble/views/editprofile_doctor_view.dart';
 import 'package:bubble/views/editprofile_view.dart';
 import 'package:bubble/views/footer_view.dart';
+import 'package:bubble/views/getstarted_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -242,7 +243,7 @@ class _SettingViewState extends State<SettingView> {
                       size: 25,
                     ),
                     onTap: () {
-                      showDeleteAlert(context);
+                      showDeleteAlert(context, role);
                     },
                     title: const Text(
                       "Delete Account",
@@ -285,15 +286,26 @@ void showAlert(context) {
       });
 }
 
-void showDeleteAlert(context) {
+void showDeleteAlert(context, role) {
   QuickAlert.show(
-      context: context,
-      type: QuickAlertType.warning,
-      text: 'Do you want to Delete Your Account Permanently',
-      confirmBtnText: 'Yes',
-      cancelBtnText: 'No',
-      cancelBtnTextStyle: const TextStyle(color: Colors.purple),
-      confirmBtnColor: Colors.purple,
-      showCancelBtn: true,
-      onConfirmBtnTap: () {});
+    context: context,
+    type: QuickAlertType.warning,
+    text: 'Do you want to Delete Your Account Permanently',
+    confirmBtnText: 'Yes',
+    cancelBtnText: 'No',
+    cancelBtnTextStyle: const TextStyle(color: Colors.purple),
+    confirmBtnColor: Colors.purple,
+    showCancelBtn: true,
+    onConfirmBtnTap: () {
+      FirebaseFirestore.instance
+          .collection(role)
+          .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+          .delete();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const GetStartedView(),
+        ),
+      );
+    },
+  );
 }

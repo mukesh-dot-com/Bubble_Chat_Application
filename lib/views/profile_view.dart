@@ -405,17 +405,19 @@ class _ProfileViewState extends State<ProfileView> {
                         .collection("requests")
                         .doc(
                             "${FirebaseAuth.instance.currentUser?.phoneNumber}?${docs['phone']}")
-                        .set({
-                      'patient_id':
-                          FirebaseAuth.instance.currentUser?.phoneNumber,
-                      'doctor_id': docs['phone'].toString(),
-                      'checked': false,
-                    });
+                        .set(
+                      {
+                        'patient_id':
+                            FirebaseAuth.instance.currentUser?.phoneNumber,
+                        'doctor_id': docs['phone'].toString(),
+                        'checked': false,
+                      },
+                    );
                     await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                             builder: (context) => ChatView(role)));
                   },
-                  child: const Text('View Slots'),
+                  child: const Text('Book'),
                 ),
               const Divider(
                 thickness: 1.3,

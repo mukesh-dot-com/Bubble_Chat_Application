@@ -3,6 +3,7 @@ import 'package:bubble/views/explore_view.dart';
 import 'package:bubble/views/patient_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
   TextEditingController message = TextEditingController();
   AsyncSnapshot? snapshot;
   String? role;
+  final ScrollController _scrollController = ScrollController();
   _ChatUserInterfaceViewState(this.snapshot, this.role) {
     print(snapshot?.data['name']);
   }
@@ -33,7 +35,6 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [],
         elevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).primaryColor,
@@ -42,7 +43,7 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
             padding: const EdgeInsets.only(right: 16),
             child: Row(
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 const Icon(
@@ -54,6 +55,13 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                 ),
                 Expanded(
                   child: InkWell(
+                    onTap: () {
+                      if (role == 'doctor') {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                PatientDetailsView(snapshot?.data['phone'])));
+                      }
+                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -80,42 +88,58 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                 const SizedBox(
                   width: 190,
                 ),
-                Container(
-                  height: 40,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.red,
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.confirm,
-                          text: "Are You sure that you want to end the chat",
-                          confirmBtnColor: Colors.purple,
-                          onConfirmBtnTap: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => ExploreView(role: role),
-                              ),
-                            );
-                          });
-                    },
-                    child: const Text(
-                      "EXIT",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
+                (role == 'doctor')
+                    ? Container(
+                        height: 40,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.red,
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.confirm,
+                                text:
+                                    "Are You sure that you want to end the chat",
+                                confirmBtnColor: Colors.purple,
+                                onConfirmBtnTap: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection("requests")
+                                      .doc(
+                                          "${snapshot?.data['phone']}?${FirebaseAuth.instance.currentUser?.phoneNumber}")
+                                      .delete();
+                                  await FirebaseFirestore.instance
+                                      .collection("history")
+                                      .doc(
+                                          "${snapshot?.data['phone']}?${FirebaseAuth.instance.currentUser?.phoneNumber}")
+                                      .set({
+                                    'patient_id': snapshot?.data['phone'],
+                                    'doctor_id': FirebaseAuth
+                                        .instance.currentUser?.phoneNumber,
+                                  });
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ExploreView(role: role),
+                                    ),
+                                  );
+                                });
+                          },
+                          child: const Text(
+                            "EXIT",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),
         ),
       ),
       body: SingleChildScrollView(
-        reverse: true,
-        scrollDirection: Axis.vertical,
         child: Column(
           children: [
             Container(
@@ -127,14 +151,14 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                         .doc(
                             "${FirebaseAuth.instance.currentUser?.phoneNumber}?${snapshot?.data['phone']}")
                         .collection("messagelist")
-                        .orderBy('time')
+                        .orderBy('time', descending: true)
                         .snapshots()
                     : FirebaseFirestore.instance
                         .collection("messages")
                         .doc(
                             "${snapshot?.data['phone']}?${FirebaseAuth.instance.currentUser?.phoneNumber}")
                         .collection("messagelist")
-                        .orderBy('time')
+                        .orderBy('time', descending: true)
                         .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -150,6 +174,7 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                   return (snapshot.data!.docs.isEmpty)
                       ? const Scaffold()
                       : ListView.builder(
+                          reverse: true,
                           itemCount: snapshot.data!.docs.length,
                           physics: const ScrollPhysics(),
                           shrinkWrap: true,
@@ -168,71 +193,79 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                                     ? CrossAxisAlignment.end
                                     : CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                      right: 10,
-                                      left: 10,
-                                    ),
-                                    constraints: BoxConstraints(
-                                        minHeight: 50,
-                                        minWidth: 120,
-                                        maxHeight: double.infinity,
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.75),
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
+                                  InkWell(
+                                    // onDoubleTap: () {
+                                    //   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const PatientDetailsView()));
+                                    // },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                        right: 10,
+                                        left: 10,
                                       ),
-                                      color: (qs['sender'] ==
-                                              FirebaseAuth.instance.currentUser
-                                                  ?.phoneNumber)
-                                          ? Colors.purple
-                                          : Colors.indigo,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: SizedBox(
-                                              child: (qs['image'] == null)
-                                                  ? Text(
-                                                      qs['message'],
-                                                      softWrap: true,
-                                                      style: const TextStyle(
-                                                        fontSize: 15,
-                                                        color: Colors.white,
+                                      constraints: BoxConstraints(
+                                          minHeight: 50,
+                                          minWidth: 120,
+                                          maxHeight: double.infinity,
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.75),
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10),
+                                        ),
+                                        color: (qs['sender'] ==
+                                                FirebaseAuth.instance
+                                                    .currentUser?.phoneNumber)
+                                            ? Colors.purple
+                                            : Colors.indigo,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Flexible(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: SizedBox(
+                                                child: (qs['image'] == null)
+                                                    ? Text(
+                                                        qs['message'],
+                                                        softWrap: true,
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                          color: Colors.white,
+                                                        ),
+                                                      )
+                                                    : Image.network(
+                                                        qs['image'],
+                                                        fit: BoxFit.cover,
                                                       ),
-                                                    )
-                                                  : Image.network(
-                                                      qs['image'],
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        (qs['image'] == null)
-                                            ? Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 20,
-                                                  right: 5,
-                                                  left: 5,
-                                                ),
-                                                child: Text(
-                                                  "${d.hour}:${d.minute}",
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
+                                          (qs['image'] == null)
+                                              ? Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 20,
+                                                    right: 5,
+                                                    left: 5,
                                                   ),
-                                                ),
-                                              )
-                                            : const Text(""),
-                                      ],
+                                                  child: Text(
+                                                    "${d.hour}:${d.minute}",
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                )
+                                              : const Text(""),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -328,6 +361,12 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                         } catch (e) {
                           //Error Will go here.
                         }
+                        setState(() {
+                          _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut);
+                        });
                       },
                       icon: const Icon(
                         Icons.add,
@@ -405,6 +444,12 @@ class _ChatUserInterfaceViewState extends State<ChatUserInterfaceView> {
                             message.clear();
                           }
                         }
+                        setState(() {
+                          _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut);
+                        });
                       },
                       icon: const Icon(
                         Icons.send_sharp,
