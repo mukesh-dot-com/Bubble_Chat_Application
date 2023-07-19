@@ -1,4 +1,4 @@
-# bubble
+# Bubble
 
 A new Flutter project.
 
