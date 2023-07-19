@@ -18,35 +18,13 @@ Welcome to the Bubble Chat Application repository! This application allows patie
 - Dart: Object-oriented programming language used in Flutter development.
 - Firebase: Backend-as-a-Service platform for authentication, real-time database, and push notifications.
 
-## Screenshots
+## User Interface
 
-Include some screenshots showcasing the user interface and features of your chat application. You can add them here:
+<div align="center">
+    <img src="/path/to/image1.png" alt="Image 1" width="300" style="display: inline-block; margin-right: 20px;">
+    <img src="/path/to/image2.png" alt="Image 2" width="300" style="display: inline-block; margin-right: 20px;">
+    <img src="/path/to/image3.png" alt="Image 3" width="300" style="display: inline-block;">
+</div>
 
-![Screenshot 1](/screenshots/screenshot1.png)
-![Screenshot 2](/screenshots/screenshot2.png)
-![Screenshot 3](/screenshots/screenshot3.png)
 
-## Getting Started
-
-To get started with the Patient-Doctor Chat Application, follow these steps:
-
-1. Clone the repository: `git clone [repository-url]`
-2. Ensure you have Flutter and Dart installed on your local machine.
-3. Set up a Firebase project and enable Firebase Authentication, Realtime Database, and Cloud Messaging.
-4. Add your Firebase configuration details in the app.
-5. Run the app on an emulator or physical device using `flutter run`.
-
-For detailed instructions and additional setup requirements, refer to the [installation guide](docs/INSTALLATION.md).
-
-## Contributions
-
-We welcome contributions from the community to enhance our chat application. If you would like to contribute, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature/your-feature`
-3. Make your changes and commit them: `git commit -m 'Add your feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Submit a pull request.
-
-Please ensure your code follows our
 
