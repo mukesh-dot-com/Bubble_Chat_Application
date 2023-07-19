@@ -20,11 +20,15 @@ Welcome to the Bubble Chat Application repository! This application allows patie
 
 ## User Interface
 
+### Landing Page
+
+![]("/screenshots/ss1.jpg")
 <div align="center">
-    <img src="/path/to/image1.png" alt="Image 1" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/path/to/image2.png" alt="Image 2" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/path/to/image3.png" alt="Image 3" width="300" style="display: inline-block;">
+    <img src="/screenshots/ss1.jpg" alt="Image 1" width="300" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss2.jpg" alt="Image 2" width="300" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss3.jpg" alt="Image 3" width="300" style="display: inline-block;">
 </div>
 
+![
 
 
