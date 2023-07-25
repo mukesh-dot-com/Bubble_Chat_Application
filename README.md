@@ -21,27 +21,27 @@ Welcome to the Bubble Chat Application repository! This application allows patie
 ## User Interface
 
 <div align="center">
-    <img src="/screenshots/ss1.jpg" alt="Image 1" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss2.jpg" alt="Image 2" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss3.jpg" alt="Image 3" width="300" style="display: inline-block;">
+    <img src="/screenshots/ss1.jpg" alt="Image 1" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss2.jpg" alt="Image 2" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss3.jpg" alt="Image 3" width="280" style="display: inline-block;">
 </div>
 <br><br><br><br>
 <div align="center">
-    <img src="/screenshots/ss4.jpg" alt="Image 1" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss5.jpg" alt="Image 2" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss6.jpg" alt="Image 3" width="300" style="display: inline-block;">
+    <img src="/screenshots/ss4.jpg" alt="Image 1" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss5.jpg" alt="Image 2" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss6.jpg" alt="Image 3" width="280" style="display: inline-block;">
 </div>
 <br><br><br><br>
 <div align="center">
-    <img src="/screenshots/ss8.jpg" alt="Image 1" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss10.jpg" alt="Image 2" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss11.jpg" alt="Image 3" width="300" style="display: inline-block;">
+    <img src="/screenshots/ss8.jpg" alt="Image 1" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss10.jpg" alt="Image 2" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss11.jpg" alt="Image 3" width="280" style="display: inline-block;">
 </div>
 <br><br><br><br>
 <div align="center">
-    <img src="/screenshots/ss12.jpg" alt="Image 1" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss13.jpg" alt="Image 2" width="300" style="display: inline-block; margin-right: 20px;">
-    <img src="/screenshots/ss14.jpg" alt="Image 3" width="300" style="display: inline-block;">
+    <img src="/screenshots/ss12.jpg" alt="Image 1" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss13.jpg" alt="Image 2" width="280" style="display: inline-block; margin-right: 20px;">
+    <img src="/screenshots/ss14.jpg" alt="Image 3" width="280" style="display: inline-block;">
 </div>
 
 ### Firebase Database
